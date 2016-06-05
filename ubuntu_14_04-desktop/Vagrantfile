@@ -1,0 +1,16 @@
+Vagrant.configure("2") do |config|
+
+################# PC 1 ####################
+
+  config.vm.define "PC1" do |pc1|
+     pc1.vm.hostname="pc1"
+     pc1.vm.box = "box-cutter/ubuntu1404-desktop"
+
+     pc1.vm.provision :shell, path: "bootstrap.sh"
+  end
+
+  config.vm.provider "virtualbox" do |pc1|
+    pc1.memory = 512
+  end
+
+end

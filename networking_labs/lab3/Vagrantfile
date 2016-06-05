@@ -1,0 +1,102 @@
+Vagrant.configure("2") do |config|
+
+
+################# Eagle ####################
+
+  config.vm.define "EAGLE" do |eagle|
+    eagle.vm.hostname = "eagle"
+    eagle.vm.box = "ubuntu/trusty64"
+    
+    eagle.vm.network "private_network", ip: "192.168.254.1",
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst1_eagle"
+
+    eagle.vm.provision :shell, path: "bootstraps/bootstrap_eagle.sh"
+  end
+  config.vm.provider "virtualbox" do |eagle|
+    #eagle.gui = true
+    eagle.memory = 384
+  end
+
+
+################# BST 1 ####################
+
+  config.vm.define "BST1" do |bst1|
+    bst1.vm.hostname = "bst1"
+    bst1.vm.box = "ubuntu/trusty64"
+    
+    bst1.vm.network "private_network", ip: "192.168.254.253",
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst1_eagle"
+    
+    bst1.vm.network "private_network", ip: "10.10.10.6",
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst1_bst2"
+
+    bst1.vm.provision :shell, path: "bootstraps/bootstrap_bst1.sh"
+  end
+  config.vm.provider "virtualbox" do |bst1|
+    #bst1.gui = true
+    bst1.memory = 384
+  end
+
+################# BST 2 ####################
+
+  config.vm.define "BST2" do |bst2|
+    bst2.vm.hostname = "bst2"
+    bst2.vm.box = "ubuntu/trusty64"
+    
+    bst2.vm.network "private_network", ip: "10.10.10.5",
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst1_bst2"
+
+    bst2.vm.network "private_network", ip: "172.16.255.254",
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst2_pc1"
+        
+    bst2.vm.network "private_network", ip: "172.16.200.254", 
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst2_pc2"
+
+    bst2.vm.provision :shell, path: "bootstraps/bootstrap_bst2.sh"
+  end
+
+  config.vm.provider "virtualbox" do |bst2|
+    #bst2.gui = true
+    bst2.memory = 384
+  end
+
+################# PC 1 ####################
+
+  config.vm.define "PC1" do |pc1|
+     pc1.vm.hostname="pc1"
+     pc1.vm.box = "box-cutter/ubuntu1404-desktop"
+  
+     pc1.vm.network "private_network", ip: "192.168.255.3",
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst2_pc1"
+
+     pc1.vm.provision :shell, path: "bootstraps/bootstrap_pc1.sh"
+  end
+
+  config.vm.provider "virtualbox" do |pc1|
+    pc1.memory = 512
+  end
+
+################# PC 2 ####################
+
+  config.vm.define "PC2" do |pc2|
+     pc2.vm.hostname="pc2"
+     pc2.vm.box = "box-cutter/ubuntu1404-desktop"
+     pc2.vm.provision :shell, path: "bootstraps/bootstrap_pc2.sh"
+
+     pc2.vm.network "private_network", ip: "172.16.200.3",
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "network_bst2_pc2"
+  end
+  
+  config.vm.provider "virtualbox" do |pc2|
+    pc2.memory = 512
+  end
+
+end
